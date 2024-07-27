@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - 80:80
+  
+  backend:
+    build: ./server
+    expose:
+      - 8971
+
+  redis:
+    image: redis:alpine
+    expose:
+      - 6379
+    ports:
+      - 6379:6379

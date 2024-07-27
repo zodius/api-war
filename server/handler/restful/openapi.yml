@@ -1,0 +1,44 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: "API War"
+paths:
+  /api/v1/me:
+    get:
+      summary: "Get user conquered fields"
+      responses:
+        '200':
+          description: "A list of field ids"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "integer"
+        '401':
+          description: "Unauthorized"
+  
+  /api/v1/conquer/{id}:
+    post:
+      summary: "Conquer a field"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Field conquered"
+        '401':
+          description: "Unauthorized"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-TOKEN
+
+security:
+  - ApiKeyAuth: []
