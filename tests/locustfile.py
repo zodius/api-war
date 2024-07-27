@@ -1,4 +1,5 @@
 import secrets
+import random
 from locust import task, between, FastHttpUser, HttpUser
 from locust.exception import StopUser
 
@@ -8,12 +9,12 @@ class NormalUser(HttpUser):
     def on_start(self):
         self.username = secrets.token_urlsafe(8)
         self.password = secrets.token_urlsafe(16)
-        with self.client.post("/register", json={"username": self.username, "password": self.password}, catch_response=True) as resp:
+        with self.client.post("/api/v1/register", json={"username": self.username, "password": self.password}, catch_response=True) as resp:
             if resp.status_code != 200:
                 raise StopUser()
     
     def login(self):
-        with self.client.post("/login", json={"username": self.username, "password": self.password}, catch_response=True) as resp:
+        with self.client.post("/api/v1/login", json={"username": self.username, "password": self.password}, catch_response=True) as resp:
             if resp.status_code != 200:
                 raise StopUser()
             return resp.json()["token"]
@@ -21,7 +22,7 @@ class NormalUser(HttpUser):
     @task
     def get_userlist(self):
         token = self.login()
-        self.client.get("/userlist", headers={"X-API-TOKEN": token})
+        self.client.get("/api/v1/userlist", headers={"X-API-TOKEN": token})
     
     @task
     def get_scoreboard(self):
@@ -40,5 +41,6 @@ class NormalUser(HttpUser):
     def restful_conquer_field(self):
         token = self.login()
         with self.client.rename_request("/api/v1/conquer/[id]"):
-            for i in range(1000000):
-                self.client.post(f"/api/v1/conquer/{i+1}", headers={"X-API-TOKEN": token})
+            for _ in range(5000):
+                id = random.randint(1, 1000000)
+                self.client.post(f"/api/v1/conquer/{id}", headers={"X-API-TOKEN": token})

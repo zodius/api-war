@@ -6,6 +6,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     token: localStorage.getItem("token") || null,
     currentType: localStorage.getItem("currentType") || "restful",
+    userList: [],
   }),
   actions: {
     async login(username, password) {

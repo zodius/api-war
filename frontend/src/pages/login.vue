@@ -32,14 +32,17 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAppStore } from '@/stores/app';
 
+const router = useRouter();
 const appStore = useAppStore();
 const username = ref('');
 const password = ref('');
 
 const login = async () => {
   await appStore.login(username.value, password.value);
+  router.push('/');
 }
 
 </script>

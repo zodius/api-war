@@ -50,6 +50,11 @@ func (h *Handler) Conquer(c *gin.Context) {
 		return
 	}
 
+	if fieldIDInt <= 0 || fieldIDInt > model.FieldCount {
+		c.JSON(400, gin.H{"error": "field id out of range"})
+		return
+	}
+
 	if err := h.Service.ConquerField(token, fieldIDInt, model.TypeRestful); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

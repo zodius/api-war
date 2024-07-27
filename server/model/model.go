@@ -1,6 +1,8 @@
 package model
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	ErrNotFound           = errors.New("not found")
@@ -48,7 +50,7 @@ type Owner struct {
 }
 
 type Field struct {
-	FieldID   int     `json:"fieldID"`
+	FieldID   int     `json:"field_id"`
 	Conquerer []Owner `json:"conquerer"`
 }
 
@@ -56,8 +58,18 @@ type Map struct {
 	Fields []Field `json:"fields"`
 }
 
-func (m *Map) StringRepresentation() string {
-	return ""
+func (m *Map) Representation() interface{} {
+	// convert map object to json encoded string
+	represent := make(map[int](map[string]string))
+	for _, field := range m.Fields {
+		for _, conquerer := range field.Conquerer {
+			if _, ok := represent[field.FieldID]; !ok {
+				represent[field.FieldID] = make(map[string]string)
+			}
+			represent[field.FieldID][conquerer.ConquerType] = conquerer.Owner
+		}
+	}
+	return represent
 }
 
 type Score struct {
@@ -71,7 +83,7 @@ type Service interface {
 	Login(username, password string) (token string, err error)
 	Register(username, password string) error
 	// basic information
-	GetCurrentMap() (mapStringRepresentation string, err error)
+	GetCurrentMap() (Map Map, err error)
 	GetUserList(token string) (userList []User, err error) // this is used to get username by id for each client
 	// services for exploit
 	GetUserConquerField(token string, conquerType string) ([]int, error)

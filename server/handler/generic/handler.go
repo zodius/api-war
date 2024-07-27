@@ -18,6 +18,20 @@ func RegisterHandler(service model.Service, app *gin.Engine) {
 	app.GET("/map", handler.GetMap)
 }
 
+// temporary middleware to disable CORS
+func (h *Handler) CorsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	}
+}
+
 func (h *Handler) GetScoreboard(c *gin.Context) {
 	scoreList, err := h.Service.GetScoreboard()
 	if err != nil {
@@ -28,10 +42,11 @@ func (h *Handler) GetScoreboard(c *gin.Context) {
 }
 
 func (h *Handler) GetMap(c *gin.Context) {
-	mapStringRepresentation, err := h.Service.GetCurrentMap()
+	mapObject, err := h.Service.GetCurrentMap()
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"map": mapStringRepresentation})
+
+	c.JSON(200, mapObject.Representation())
 }
