@@ -13,6 +13,7 @@ func main() {
 	app := gin.Default()
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: "redis:6379",
+		// Addr: "localhost:6379",
 	})
 	defer redisClient.Close()
 

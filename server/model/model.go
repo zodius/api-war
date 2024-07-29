@@ -82,8 +82,9 @@ type Service interface {
 	// auth
 	Login(username, password string) (token string, err error)
 	Register(username, password string) error
+	GetMe(token string) (username string, err error)
 	// basic information
-	GetCurrentMap() (Map Map, err error)
+	GetCurrentMap(start, end int) (Map Map, err error)
 	GetUserList(token string) (userList []User, err error) // this is used to get username by id for each client
 	// services for exploit
 	GetUserConquerField(token string, conquerType string) ([]int, error)
@@ -97,7 +98,7 @@ type Repo interface {
 	CreateUser(username, password string) error
 	CreateToken(username string) (token string, err error)
 	GetTokenUsername(token string) (username string, err error)
-	GetMap() (Map, error)
+	GetMap(start, end int) (Map, error)
 	GetUserList() (userList []User, err error)
 	GetUserConquerField(username string, conquerType string) ([]int, error)
 	GetScoreboard() (scoreList []Score, err error)

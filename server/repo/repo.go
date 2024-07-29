@@ -81,7 +81,6 @@ func (r *repo) CreateUser(username, password string) error {
 	userID := userCount + 1
 
 	// create user
-	fmt.Printf("create user: %s\n", username)
 	if err := r.client.HSet(context.Background(), fmt.Sprintf("user:%s", username),
 		"password", password,
 		"id", userID,
@@ -153,32 +152,51 @@ func (r *repo) GetTokenUsername(token string) (username string, err error) {
 	return username, nil
 }
 
-func (r *repo) GetMap() (model.Map, error) {
-	mapMap := make(map[int]model.Field)
+func (r *repo) GetMap(startInput, endInput int) (model.Map, error) {
+	mapMap := make(map[int]model.Field, endInput-startInput+1)
+
 	conquerTypes := []string{"webservice", "restful", "graphql", "grpc"}
 	for _, conquerType := range conquerTypes {
-		// get conquerer
-		conquererMap, err := r.client.HGetAll(context.Background(), fmt.Sprintf("fields:%s:conquerer", conquerType)).Result()
-		if err != nil {
-			return model.Map{}, err
-		}
-		for fieldIDStr, username := range conquererMap {
-			fieldID, err := strconv.Atoi(fieldIDStr)
+		start, end := startInput, endInput
+		// get conquerer within range in batch
+		// for each batch, get conquerer using hmget
+		for start <= end {
+			// check remaining is less than batchsize
+			batchSize := model.BatchSize
+			if start+batchSize > end {
+				batchSize = end - start + 1
+			}
+			fields := make([]string, 0, batchSize)
+			for i := start; i < start+batchSize-1; i++ {
+				fields = append(fields, strconv.Itoa(i))
+			}
+			conquerers, err := r.client.HMGet(context.Background(), fmt.Sprintf("fields:%s:conquerer", conquerType),
+				fields...,
+			).Result()
 			if err != nil {
 				return model.Map{}, err
 			}
-			field, ok := mapMap[fieldID]
-			if !ok {
-				field = model.Field{
-					FieldID:   fieldID,
-					Conquerer: make([]model.Owner, 0),
+			for i, conquerer := range conquerers {
+				fieldID := start + i
+				field, ok := mapMap[fieldID]
+				if !ok {
+					field = model.Field{
+						FieldID:   fieldID,
+						Conquerer: make([]model.Owner, 0),
+					}
 				}
+				conquererName := ""
+				if conquerer != nil {
+					conquererName = conquerer.(string)
+				}
+
+				field.Conquerer = append(field.Conquerer, model.Owner{
+					ConquerType: conquerType,
+					Owner:       conquererName,
+				})
+				mapMap[fieldID] = field
 			}
-			field.Conquerer = append(field.Conquerer, model.Owner{
-				ConquerType: conquerType,
-				Owner:       username,
-			})
-			mapMap[fieldID] = field
+			start += batchSize
 		}
 	}
 

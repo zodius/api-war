@@ -20,9 +20,14 @@ class NormalUser(HttpUser):
             return resp.json()["token"]
     
     @task
+    def get_me(self):
+        token = self.login()
+        self.client.get("/me", headers={"X-Api-Token": token})
+    
+    @task
     def get_userlist(self):
         token = self.login()
-        self.client.get("/api/v1/userlist", headers={"X-API-TOKEN": token})
+        self.client.get("/api/v1/userlist", headers={"X-Api-Token": token})
     
     @task
     def get_scoreboard(self):
@@ -30,12 +35,12 @@ class NormalUser(HttpUser):
     
     @task
     def get_currentmap(self):
-        self.client.get("/map")
+        self.client.get("/map", params={"start": 0, "end": 10})
     
     @task(20)
     def restful_get_user_conquer_fields(self):
         token = self.login()
-        self.client.get("/api/v1/me", headers={"X-API-TOKEN": token})
+        self.client.get("/api/v1/fields", headers={"X-Api-Token": token})
 
     @task(20)
     def restful_conquer_field(self):
@@ -43,4 +48,4 @@ class NormalUser(HttpUser):
         with self.client.rename_request("/api/v1/conquer/[id]"):
             for _ in range(5000):
                 id = random.randint(1, 1000000)
-                self.client.post(f"/api/v1/conquer/{id}", headers={"X-API-TOKEN": token})
+                self.client.post(f"/api/v1/conquer/{id}", headers={"X-Api-Token": token})

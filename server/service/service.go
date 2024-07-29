@@ -50,8 +50,15 @@ func (s *service) Login(username, password string) (token string, err error) {
 	return s.repo.CreateToken(username)
 }
 
-func (s *service) GetCurrentMap() (Map model.Map, err error) {
-	return s.repo.GetMap()
+func (s *service) GetMe(token string) (username string, err error) {
+	return s.repo.GetTokenUsername(token)
+}
+
+func (s *service) GetCurrentMap(start, end int) (Map model.Map, err error) {
+	if start == 0 {
+		return s.repo.GetMap(1, model.FieldCount)
+	}
+	return s.repo.GetMap(start, end)
 }
 
 func (s *service) GetUserList(token string) (userList []model.User, err error) {

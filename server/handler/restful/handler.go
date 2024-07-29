@@ -23,7 +23,7 @@ func RegisterHandler(service model.Service, app *gin.Engine) {
 	api.POST("/login", handler.Login)
 	api.GET("/userlist", handler.GetUserList)
 	api.POST("/conquer/:id", handler.Conquer)
-	api.GET("/me", handler.Me)
+	api.GET("/fields", handler.GetConquerFields)
 
 	// leak openapi spec
 	app.GET("/openapi.yml", func(c *gin.Context) {
@@ -32,7 +32,7 @@ func RegisterHandler(service model.Service, app *gin.Engine) {
 }
 
 func (h *Handler) Conquer(c *gin.Context) {
-	token := c.GetHeader("X-API-TOKEN")
+	token := c.GetHeader("X-Api-Token")
 	if token == "" {
 		c.JSON(401, gin.H{"error": "unauthorized"})
 		return
@@ -63,8 +63,8 @@ func (h *Handler) Conquer(c *gin.Context) {
 	c.JSON(200, gin.H{})
 }
 
-func (h *Handler) Me(c *gin.Context) {
-	token := c.GetHeader("X-API-TOKEN")
+func (h *Handler) GetConquerFields(c *gin.Context) {
+	token := c.GetHeader("X-Api-Token")
 	if token == "" {
 		c.JSON(401, gin.H{"error": "unauthorized"})
 		return
@@ -127,7 +127,7 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 func (h *Handler) GetUserList(c *gin.Context) {
-	token := c.GetHeader("X-API-TOKEN")
+	token := c.GetHeader("X-Api-Token")
 	if token == "" {
 		c.JSON(401, gin.H{"error": "unauthorized"})
 		return
