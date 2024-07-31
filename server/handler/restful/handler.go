@@ -21,14 +21,8 @@ func RegisterHandler(service model.Service, app *gin.Engine) {
 
 	api.POST("/register", handler.Register)
 	api.POST("/login", handler.Login)
-	api.GET("/userlist", handler.GetUserList)
 	api.POST("/conquer/:id", handler.Conquer)
 	api.GET("/fields", handler.GetConquerFields)
-
-	// leak openapi spec
-	app.GET("/openapi.yml", func(c *gin.Context) {
-		c.File("handler/restful/openapi.yml")
-	})
 }
 
 func (h *Handler) Conquer(c *gin.Context) {

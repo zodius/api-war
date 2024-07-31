@@ -5,7 +5,25 @@ services:
     ports:
       - 80:80
   
-  backend:
+  backend1:
+    build: ./server
+    restart: always
+    expose:
+      - 8971
+  
+  backend2:
+    build: ./server
+    restart: always
+    expose:
+      - 8971
+  
+  backend3:
+    build: ./server
+    restart: always
+    expose:
+      - 8971
+  
+  backend4:
     build: ./server
     restart: always
     expose:

@@ -275,42 +275,39 @@ func (r *repo) GetScoreboard() ([]model.Score, error) {
 	scoreMap := make(map[string]model.Score)
 
 	zrangeKey := []string{
-		"score:conquerCount",
-		"score:conquerHistory:webservice",
-		"score:conquerHistory:restful",
-		"score:conquerHistory:graphql",
-		"score:conquerHistory:grpc",
+		"webservice",
+		"restful",
+		"graphql",
+		"grpc",
 	}
 
+	// get first 100 conquerCount
+	zrange, err := r.client.ZRangeWithScores(context.Background(), "score:conquerCount", -100, -1).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	userKeyList := make([]string, 0, len(zrange))
+	for _, z := range zrange {
+		scoreMap[z.Member.(string)] = model.Score{
+			Username:            z.Member.(string),
+			ConquerFieldCount:   int(z.Score),
+			ConquerHistoryCount: make(map[string]int),
+		}
+		userKeyList = append(userKeyList, z.Member.(string))
+	}
+
+	// get conquerHistory
 	for _, key := range zrangeKey {
-		zrange, err := r.client.ZRangeWithScores(context.Background(), key, 0, -1).Result()
+		values, err := r.client.ZMScore(context.Background(),
+			fmt.Sprintf("score:conquerHistory:%s", key),
+			userKeyList...,
+		).Result()
 		if err != nil {
 			return nil, err
 		}
-		for _, z := range zrange {
-			score, ok := scoreMap[z.Member.(string)]
-			if !ok {
-				// if not exist, create new score
-				score = model.Score{
-					Username:            z.Member.(string),
-					ConquerHistoryCount: make(map[string]int),
-				}
-			}
-
-			switch key {
-			case "score:conquerCount":
-				score.ConquerFieldCount = int(z.Score)
-			case "score:conquerHistory:webservice":
-				score.ConquerHistoryCount["webservice"] = int(z.Score)
-			case "score:conquerHistory:restful":
-				score.ConquerHistoryCount["restful"] = int(z.Score)
-			case "score:conquerHistory:graphql":
-				score.ConquerHistoryCount["graphql"] = int(z.Score)
-			case "score:conquerHistory:grpc":
-				score.ConquerHistoryCount["grpc"] = int(z.Score)
-			}
-
-			scoreMap[z.Member.(string)] = score
+		for i, value := range values {
+			scoreMap[userKeyList[i]].ConquerHistoryCount[key] = int(value)
 		}
 	}
 

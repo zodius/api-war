@@ -1,6 +1,7 @@
 package generic
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -77,13 +78,22 @@ func (h *Handler) GetMap(c *gin.Context) {
 			c.JSON(400, gin.H{"error": "Invalid start and end parameter"})
 			return
 		}
-		if start < 0 || end > model.FieldCount {
+		if start <= 0 || end > model.FieldCount {
 			c.JSON(400, gin.H{"error": "Invalid start and end parameter"})
 			return
 		}
+		if start > end {
+			c.JSON(400, gin.H{"error": "Invalid start and end parameter"})
+			return
+		}
+		if end-start+1 > 1000 {
+			start = end - 1000 + 1
+		}
+
 		startPos, endPos = start, end
 	}
 
+	fmt.Println(startPos, endPos)
 	mapObject, err := h.Service.GetCurrentMap(startPos, endPos)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})

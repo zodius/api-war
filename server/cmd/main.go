@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"github.com/zodius/api-war/handler/generic"
+	"github.com/zodius/api-war/handler/graphql"
 	"github.com/zodius/api-war/handler/restful"
 	"github.com/zodius/api-war/repo"
 	"github.com/zodius/api-war/service"
@@ -23,6 +24,7 @@ func main() {
 
 	generic.RegisterHandler(service, app)
 	restful.RegisterHandler(service, app)
+	graphql.RegisterHandler(service, app)
 
 	app.Run(":8971")
 }

@@ -1,0 +1,17 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Field {
+  ID: Int!
+}
+
+type Query {
+  fields: [Field!]!
+}
+
+type Mutation {
+  login(username: String!, password: String!): String
+  register(username: String!, password: String!): Int
+  conquerField(FieldID: Int!): Int
+}

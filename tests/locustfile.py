@@ -35,7 +35,7 @@ class NormalUser(HttpUser):
     
     @task
     def get_currentmap(self):
-        self.client.get("/map", params={"start": 0, "end": 10})
+        self.client.get("/map", params={"start": 1, "end": 10000})
     
     @task(20)
     def restful_get_user_conquer_fields(self):

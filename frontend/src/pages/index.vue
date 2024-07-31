@@ -11,7 +11,7 @@
             <v-btn class="mx-0" @click="conquer(items[(row-1)*12+(col-1)].id, (row-1)*12+(col-1))"
               :color="items[(row - 1) * 12 + (col - 1)]?.[currentType] === username ? 'primary' : ''"
             >
-              {{ items[(row - 1) * 12 + (col - 1)]?.[currentType] }}
+              {{ (items[(row - 1) * 12 + (col - 1)]?.[currentType]).substring(0, 6) }}
             </v-btn>
           </v-col>
         </v-row>

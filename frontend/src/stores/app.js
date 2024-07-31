@@ -7,7 +7,6 @@ export const useAppStore = defineStore("app", {
     token: localStorage.getItem("token") || null,
     username: null,
     currentType: localStorage.getItem("currentType") || "restful",
-    userList: [],
   }),
   getters: {
     isLoggedIn() {
