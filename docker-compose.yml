@@ -3,7 +3,7 @@ services:
     build: ./frontend
     restart: always
     ports:
-      - 80:80
+      - 8080:80
   
   backend1:
     build: ./server
@@ -34,5 +34,3 @@ services:
     restart: always
     expose:
       - 6379
-    ports:
-      - 6379:6379

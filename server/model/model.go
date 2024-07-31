@@ -11,12 +11,10 @@ var (
 )
 
 const (
-	FieldCount     = 1000000
-	BatchSize      = 1000
-	TypeWebservice = "webservice"
-	TypeRestful    = "restful"
-	TypeGraphql    = "graphql"
-	TypeGrpc       = "grpc"
+	FieldCount  = 1000000
+	BatchSize   = 1000
+	TypeRestful = "restful"
+	TypeGraphql = "graphql"
 )
 
 /*
@@ -30,10 +28,8 @@ const (
 	- ZSet:
 		{"users": [<username> <id>]}
 		{"score:conquerCount": [<username> <count>]}
-		{"score:conquerHistory:webservice": [<username> <count>]}
 		{"score:conquerHistory:restful": [<username> <count>]}
 		{"score:conquerHistory:graphql": [<username> <count>]}
-		{"score:conquerHistory:grpc": [<username> <count>]}
 	- Bitmap:
 		{"user:<username>:conquerField:<type>": <fieldID>}
 */
@@ -45,7 +41,7 @@ type User struct {
 }
 
 type Owner struct {
-	ConquerType string `json:"conquerType"` // webservice, restful, grqphql, grpc
+	ConquerType string `json:"conquerType"` // restful, grqphql
 	Owner       string `json:"owner"`
 }
 

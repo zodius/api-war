@@ -147,7 +147,6 @@ const load = ({ side, done }) => {
 }
 
 const loadData = async (start, end) => {
-  // data: { id: { webservice: '', restful: '', graphql: '', grpc: ''}}
 
   let res = await axios.get('/map', {
     params: {
@@ -164,20 +163,16 @@ const loadData = async (start, end) => {
   //     if (Math.random() > 0.1) {
   //       return {
   //         [index]: {
-  //           webservice: "AAAAAA",
   //           restful: "BBBBBB",
   //           graphql: "CCCCCC",
-  //           grpc: "DDDDDD"
   //         }
   //       }
   //     } else {
   //       let randomString = Math.random().toString(36).substring(7)
   //       return {
   //         [index]: {
-  //           webservice: randomString,
   //           restful: randomString,
   //           graphql: randomString,
-  //           grpc: randomString
   //         }
   //       }
   //     }

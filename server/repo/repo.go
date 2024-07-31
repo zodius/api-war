@@ -101,7 +101,7 @@ func (r *repo) CreateUser(username, password string) error {
 		return err
 	}
 
-	conquerTypes := []string{"webservice", "restful", "graphql", "grpc"}
+	conquerTypes := []string{"restful", "graphql"}
 	for _, conquerType := range conquerTypes {
 		// create conquer history score
 		if err := r.client.ZAdd(context.Background(), fmt.Sprintf("score:conquerHistory:%s", conquerType), redis.Z{
@@ -155,7 +155,7 @@ func (r *repo) GetTokenUsername(token string) (username string, err error) {
 func (r *repo) GetMap(startInput, endInput int) (model.Map, error) {
 	mapMap := make(map[int]model.Field, endInput-startInput+1)
 
-	conquerTypes := []string{"webservice", "restful", "graphql", "grpc"}
+	conquerTypes := []string{"restful", "graphql"}
 	for _, conquerType := range conquerTypes {
 		start, end := startInput, endInput
 		// get conquerer within range in batch
@@ -275,10 +275,8 @@ func (r *repo) GetScoreboard() ([]model.Score, error) {
 	scoreMap := make(map[string]model.Score)
 
 	zrangeKey := []string{
-		"webservice",
 		"restful",
 		"graphql",
-		"grpc",
 	}
 
 	// get first 100 conquerCount
@@ -341,20 +339,12 @@ func (r *repo) AddScore(username string, fieldID int, conquerType string) error 
 	}
 	// add score:conquerHistory:<conquerType>
 	switch conquerType {
-	case "webservice":
-		if err := r.client.ZIncrBy(context.Background(), "score:conquerHistory:webservice", 1, username).Err(); err != nil {
-			return err
-		}
 	case "restful":
 		if err := r.client.ZIncrBy(context.Background(), "score:conquerHistory:restful", 1, username).Err(); err != nil {
 			return err
 		}
 	case "graphql":
 		if err := r.client.ZIncrBy(context.Background(), "score:conquerHistory:graphql", 1, username).Err(); err != nil {
-			return err
-		}
-	case "grpc":
-		if err := r.client.ZIncrBy(context.Background(), "score:conquerHistory:grpc", 1, username).Err(); err != nil {
 			return err
 		}
 	}

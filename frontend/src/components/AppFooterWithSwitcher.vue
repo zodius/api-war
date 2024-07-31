@@ -24,7 +24,6 @@ const appStore = useAppStore()
 const { currentType } = storeToRefs(appStore)
 
 const icons = [
-  { icon: 'mdi-cog-outline', label: 'webservice' },
   { icon: 'mdi-book', label: 'restful' },
   { icon: 'mdi-database-search', label: 'graphql' },
 ]

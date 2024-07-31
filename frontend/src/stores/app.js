@@ -39,6 +39,9 @@ export const useAppStore = defineStore("app", {
         case "restful":
           this.restLogin(username, password);
           break;
+        case "graphql":
+          this.graphqlLogin(username, password);
+          break;
         default:
           console.error("Invalid type");
       }
@@ -48,6 +51,9 @@ export const useAppStore = defineStore("app", {
         case "restful":
           this.restRegister(username, password);
           break;
+        case "graphql":
+          this.graphqlRegister(username, password);
+          break;
         default:
           console.error("Invalid type");
       }
@@ -56,6 +62,9 @@ export const useAppStore = defineStore("app", {
       switch (this.currentType) {
         case "restful":
           this.restConquer(index);
+          break;
+        case "graphql":
+          this.graphqlConquer(index);
           break;
         default:
           console.error("Invalid type");
@@ -72,6 +81,8 @@ export const useAppStore = defineStore("app", {
       });
       this.token = res.data.token;
       this.username = username;
+      console.log("Set token to", this.token);
+      console.log("Set username to", this.username);
       localStorage.setItem("token", this.token);
     },
     async restRegister(username, password) {
@@ -91,5 +102,54 @@ export const useAppStore = defineStore("app", {
         }
       );
     },
+    async graphqlRegister(username, password) {
+      let res = await axios.post("/graphql", {
+        query: `
+          mutation {
+            register(username: "${username}", password: "${password}")
+          }
+        `,
+      });
+    },
+    async graphqlLogin(username, password) {
+      let headers = {
+        "content-type": "application/json",
+      };
+      let query = {
+        "query": `mutation {
+          login(username: "${username}", password: "${password}")
+        }`,
+      }
+      let res = await axios({
+        method: "post",
+        url: "/graphql",
+        data: query,
+        headers: headers,
+      });
+      let token = res.data.data.login;
+      this.token = token;
+      this.username = username;
+      console.log("Set token to", this.token);
+      console.log("Set username to", this.username);
+      localStorage.setItem("token", this.token);
+    },
+    async graphqlConquer(index) {
+      let headers = {
+        "content-type": "application/json",
+        "X-Api-Token": this.token,
+      };
+      let query = {
+        "query": `mutation {
+          conquerField(FieldID: ${index})
+        }`,
+      }
+      let res = await axios({
+        method: "post",
+        url: "/graphql",
+        data: query,
+        headers: headers,
+      });
+      console.log(res.data);
+    }
   },
 });

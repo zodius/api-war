@@ -6,10 +6,8 @@
           <th>Rank</th>
           <th>Username</th>
           <th>Score</th>
-          <th>WebService</th>
           <th>Restful</th>
           <th>Graphql</th>
-          <th>GRPC</th>
         </tr>
       </thead>
       <tbody>
@@ -17,10 +15,8 @@
           <td>{{ index + 1 }}</td>
           <td>{{ score?.username }}</td>
           <td>{{ score?.conquerFieldCount }}</td>
-          <td>{{ score?.conquerHistoryCount?.webservice }}</td>
           <td>{{ score?.conquerHistoryCount?.restful }}</td>
           <td>{{ score?.conquerHistoryCount?.graphql }}</td>
-          <td>{{ score?.conquerHistoryCount?.grpc }}</td>
         </tr>
       </tbody>
     </v-table>

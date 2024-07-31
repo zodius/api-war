@@ -41,6 +41,9 @@ const username = ref('');
 const password = ref('');
 
 const login = async () => {
+  if (!username.value || !password.value) {
+    return;
+  }
   await appStore.login(username.value, password.value);
   router.push('/');
 }
